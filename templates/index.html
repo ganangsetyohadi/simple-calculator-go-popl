@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Web Calculator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Web Calculator</h1>
+        <form id="calcForm" action="/" method="POST">
+            <div class="input-group">
+                <input type="number" name="num1" step="any" placeholder="Enter first number" required>
+            </div>
+            <div class="input-group">
+                <select name="operator" required>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">*</option>
+                    <option value="/">/</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="number" name="num2" step="any" placeholder="Enter second number" required>
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+        <h2 id="result">Result: {{.Result}}</h2>
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
