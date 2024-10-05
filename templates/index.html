@@ -8,20 +8,23 @@
 </head>
 <body>
     <div class="container">
-        <h1>Simple Web Calculator</h1>
+        <h1>Enhanced Web Calculator</h1>
         <form id="calcForm" action="/" method="POST">
             <div class="input-group">
                 <input type="number" name="num1" step="any" placeholder="Enter first number" required>
             </div>
             <div class="input-group">
-                <select name="operator" required>
+                <select name="operator" id="operator" required onchange="toggleSecondInput()">
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="*">*</option>
                     <option value="/">/</option>
+                    <option value="^">^ (Pangkat)</option>
+                    <option value="%">Modulo (%)</option>
+                    <option value="sqrt">√ (Akar Kuadrat)</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="input-group" id="secondNumberGroup">
                 <input type="number" name="num2" step="any" placeholder="Enter second number" required>
             </div>
             <button type="submit">Calculate</button>

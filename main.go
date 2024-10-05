@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -26,8 +27,8 @@ func calculatorHandler(w http.ResponseWriter, r *http.Request) {
 		num2, err2 := strconv.ParseFloat(r.FormValue("num2"), 64)
 		operator := r.FormValue("operator")
 
-		if err1 != nil || err2 != nil {
-			renderTemplate(w, "Invalid input")
+		if err1 != nil {
+			renderTemplate(w, "Invalid input for the first number")
 			return
 		}
 
@@ -42,10 +43,24 @@ func calculatorHandler(w http.ResponseWriter, r *http.Request) {
 		case "*":
 			result = num1 * num2
 		case "/":
-			if num2 != 0 {
-				result = num1 / num2
-			} else {
+			if err2 != nil || num2 == 0 {
 				calcError = "Error: Division by zero"
+			} else {
+				result = num1 / num2
+			}
+		case "^": // Operasi pangkat
+			result = math.Pow(num1, num2)
+		case "%": // Operasi modulo
+			if err2 != nil || num2 == 0 {
+				calcError = "Error: Modulo by zero"
+			} else {
+				result = math.Mod(num1, num2)
+			}
+		case "sqrt": // Akar kuadrat
+			if num1 < 0 {
+				calcError = "Error: Square root of a negative number"
+			} else {
+				result = math.Sqrt(num1)
 			}
 		default:
 			calcError = "Error: Invalid operator"

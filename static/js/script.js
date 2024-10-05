@@ -16,3 +16,14 @@ document.getElementById('calcForm').addEventListener('submit', function (e) {
         document.getElementById('result').textContent = result;
     });
 });
+
+function toggleSecondInput() {
+    const operator = document.getElementById("operator").value;
+    const secondNumberGroup = document.getElementById("secondNumberGroup");
+
+    if (operator === "sqrt") {
+        secondNumberGroup.style.display = "none";
+    } else {
+        secondNumberGroup.style.display = "block";
+    }
+}
