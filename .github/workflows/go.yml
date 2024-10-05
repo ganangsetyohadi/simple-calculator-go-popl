@@ -1,6 +1,7 @@
-# This workflow will build and push a Docker image for the Golang project
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go Docker Build and Push
+name: Go
 
 on:
   push:
@@ -9,47 +10,29 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
-
     steps:
-    # Checkout repository
     - uses: actions/checkout@v4
 
-    # Login to Docker Hub
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.2'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    # Build and push Docker image
-    - name: Build and push Docker image
+        username: ${{ secrets.DOCKERHUB_USERNAME}}
+        password: ${{ secrets.DOCKERHUB_TOKEN}}
+    - name: Build and push
       uses: docker/build-push-action@v6
       with:
-        context: .
-        file: ./Dockerfile
         push: true
         tags: ganangsetyohadi/praktikum-popl-5:latest
-
-    # Optional: Run Docker container and test
-    - name: Run Docker container and test
-      run: |
-        docker run -d -p 8080:8080 --name my_app ganangsetyohadi/praktikum-popl-5:latest
-        echo "Waiting for the app to start..."
-        sleep 10 # Tunggu beberapa detik agar aplikasi bisa mulai
-
-        # Cek status kontainer
-        docker ps
-
-        # Test the application
-        response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
-        echo "Response code: $response"
-        if [ "$response" -ne 200 ]; then
-          echo "Failed to connect to the application."
-          exit 1
-        fi
-
-        # Optionally stop and remove the container
-        docker stop my_app
-        docker rm my_app
