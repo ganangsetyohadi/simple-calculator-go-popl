@@ -1,7 +1,6 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+# This workflow will build and push a Docker image for the Golang project
 
-name: Go
+name: Go Docker Build and Push
 
 on:
   push:
@@ -10,31 +9,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+
     steps:
+    # Checkout repository
     - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.23.2'
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
-
+    # Login to Docker Hub
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME}}
-        password: ${{ secrets.DOCKERHUB_TOKEN}}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push
+    # Build and push Docker image
+    - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
+        context: .
+        file: ./Dockerfile
         push: true
         tags: ganangsetyohadi/praktikum-popl-5:latest
+
+    # Optional: Test Docker container
+    - name: Run Docker container and test
+      run: |
+        docker run -d -p 8080:8080 ganangsetyohadi/praktikum-popl-5:latest
+        sleep 10 # Tunggu container berjalan
+        curl --fail http://localhost:8080 || exit 1
