@@ -4,6 +4,9 @@ FROM golang:1.23 as builder
 # Setel direktori kerja di dalam container
 WORKDIR /app
 
+# Copy file go.mod dan go.sum untuk mengunduh dependensi
+COPY go.mod go.sum ./
+
 # Unduh semua dependensi yang didefinisikan di go.mod
 RUN go mod download
 
