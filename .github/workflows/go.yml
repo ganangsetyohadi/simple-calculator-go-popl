@@ -32,9 +32,24 @@ jobs:
         push: true
         tags: ganangsetyohadi/praktikum-popl-5:latest
 
-    # Optional: Test Docker container
+    # Optional: Run Docker container and test
     - name: Run Docker container and test
       run: |
-        docker run -d -p 8080:8080 ganangsetyohadi/praktikum-popl-5:latest
-        sleep 10 # Tunggu container berjalan
-        curl --fail http://localhost:8080 || exit 1
+        docker run -d -p 8080:8080 --name my_app ganangsetyohadi/praktikum-popl-5:latest
+        echo "Waiting for the app to start..."
+        sleep 10 # Tunggu beberapa detik agar aplikasi bisa mulai
+
+        # Cek status kontainer
+        docker ps
+
+        # Test the application
+        response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
+        echo "Response code: $response"
+        if [ "$response" -ne 200 ]; then
+          echo "Failed to connect to the application."
+          exit 1
+        fi
+
+        # Optionally stop and remove the container
+        docker stop my_app
+        docker rm my_app
